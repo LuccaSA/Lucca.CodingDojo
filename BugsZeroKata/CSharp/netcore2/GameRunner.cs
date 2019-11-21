@@ -26,6 +26,8 @@ namespace Trivia
                 {
                     notAWinner = aGame.WasCorrectlyAnswered();
                 }
+                
+                aGame.EndPlayerTurn();
 
 
 

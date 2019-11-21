@@ -8,7 +8,8 @@ namespace Trivia
     public class Game
     {
         private const int PlacesPerCategory = 3;
-        
+        private const int CoinsToWin = 6;
+
         List<Player> players = new List<Player>();
 
         private List<Category> categories = new List<Category>();
@@ -113,7 +114,7 @@ namespace Trivia
 
             if (inPenaltyBox[currentPlayer])
             {
-                if (roll % 2 != 0)
+                if (IsOdd(roll))
                 {
                     isGettingOutOfPenaltyBox = true;
 
@@ -153,6 +154,11 @@ namespace Trivia
                 AskQuestion();
             }
 
+        }
+
+        private static bool IsOdd(int roll)
+        {
+            return roll % 2 != 0;
         }
 
         private void AskQuestion()
@@ -201,17 +207,11 @@ namespace Trivia
                             + purses[currentPlayer]
                             + " Gold Coins.");
 
-                    bool winner = DidPlayerWin();
+                    return DidPlayerWin();
                     
-                    currentPlayer++;
-                    if (currentPlayer == players.Count) currentPlayer = 0;
-
-                    return winner;
                 }
                 else
                 {
-                    currentPlayer++;
-                    if (currentPlayer == players.Count) currentPlayer = 0;
                     return true;
                 }
 
@@ -228,12 +228,15 @@ namespace Trivia
                         + purses[currentPlayer]
                         + " Gold Coins.");
 
-                bool winner = DidPlayerWin();
-                currentPlayer++;
-                if (currentPlayer == players.Count) currentPlayer = 0;
+                return DidPlayerWin();
 
-                return winner;
             }
+        }
+
+        public void EndPlayerTurn()
+        {
+            currentPlayer++;
+            if (currentPlayer == players.Count) currentPlayer = 0;
         }
 
         public bool WrongAnswer()
@@ -241,16 +244,14 @@ namespace Trivia
             Console.WriteLine("Question was incorrectly answered");
             Console.WriteLine(players[currentPlayer] + " was sent to the penalty box");
             inPenaltyBox[currentPlayer] = true;
-
-            currentPlayer++;
-            if (currentPlayer == players.Count) currentPlayer = 0;
+            
             return true;
         }
 
 
         private bool DidPlayerWin()
         {
-            return !(purses[currentPlayer] == 6);
+            return purses[currentPlayer] == CoinsToWin;
         }
 
         public int GetPlayerCoins(int index) => 
