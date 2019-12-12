@@ -19,11 +19,6 @@ namespace Trivia
         private readonly Category rockCategory = new Category("Rock");
         private readonly Category scienceCategory = new Category("Science");
         private readonly Category sportsCategory = new Category("Sports");
-        
-        private Deck popDeck;
-        private Deck rockDeck;
-        private Deck scienceDeck;
-        private Deck sportsDeck;
 
         private readonly Dictionary<Category, Deck> deckByCategory;
 
