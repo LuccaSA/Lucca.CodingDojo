@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using Newtonsoft.Json.Serialization;
 
 namespace Trivia
@@ -10,20 +11,21 @@ namespace Trivia
         private const int PlacesPerCategory = 3;
         private const int CoinsToWin = 6;
         private const int QuestionCount = 50;
-        List<Player> players = new List<Player>();
 
-        
-        private List<Category> categories = new List<Category>();
+        private readonly List<Player> players = new List<Player>();
+        private readonly List<Category> categories = new List<Category>();
 
-        private Category popCategory = new Category("Pop");
-        private Category rockCategory = new Category("Rock");
-        private Category scienceCategory = new Category("Science");
-        private Category sportsCategory = new Category("Sports");
+        private readonly Category popCategory = new Category("Pop");
+        private readonly Category rockCategory = new Category("Rock");
+        private readonly Category scienceCategory = new Category("Science");
+        private readonly Category sportsCategory = new Category("Sports");
         
         private Deck popDeck;
         private Deck rockDeck;
         private Deck scienceDeck;
         private Deck sportsDeck;
+
+        private readonly Dictionary<Category, Deck> deckByCategory;
 
         int[] places = new int[6];
         int[] purses = new int[6];
@@ -38,24 +40,11 @@ namespace Trivia
             Add(player1);
             Add(player2);
             categories.AddRange(new []{popCategory,scienceCategory,sportsCategory,rockCategory});
-            
-            LinkedList<string> popQuestions = new LinkedList<string>();
-            LinkedList<string> scienceQuestions = new LinkedList<string>();
-            LinkedList<string> sportsQuestions = new LinkedList<string>();
-            LinkedList<string> rockQuestions = new LinkedList<string>();
-            
-            for (int i = 0; i < QuestionCount; i++)
-            {
-                popQuestions.AddLast("Pop Question " + i);
-                scienceQuestions.AddLast(("Science Question " + i));
-                sportsQuestions.AddLast(("Sports Question " + i));
-                rockQuestions.AddLast(CreateRockQuestion(i));
-            }
-            
-            popDeck = new Deck(popCategory, popQuestions);
-            rockDeck = new Deck(rockCategory, rockQuestions);
-            scienceDeck = new Deck(scienceCategory, scienceQuestions);
-            sportsDeck = new Deck(sportsCategory, sportsQuestions);
+
+            deckByCategory = 
+                DeckFactory
+                    .Create(QuestionCount, categories)
+                    .ToDictionary(x => x.Category);
         }
 
         public Game(Player player1, Player player2, Player player3)
@@ -172,24 +161,9 @@ namespace Trivia
 
         private void AskQuestion()
         {
-            if (CurrentCategory() == popDeck.Category)
-            {
-                Console.WriteLine(popDeck.Pick());
-            }
-            if (CurrentCategory() == scienceCategory)
-            {
-                Console.WriteLine(scienceDeck.Pick());
-            }
-            if (CurrentCategory() == sportsCategory)
-            {
-                Console.WriteLine(sportsDeck.Pick());
-            }
-            if (CurrentCategory() == rockDeck.Category)
-            {
-                Console.WriteLine(rockDeck.Pick());
-            }
+            Console.WriteLine(
+                deckByCategory[CurrentCategory()].Pick());
         }
-
 
         private Category CurrentCategory()
         {

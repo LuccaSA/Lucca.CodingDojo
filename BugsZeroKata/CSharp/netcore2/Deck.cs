@@ -1,24 +1,19 @@
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Trivia
 {
     public class Deck
     {
-        public Category Category { get; }
-        private LinkedList<string> _questions;
+        private readonly Stack<string> _questions;
 
-        public Deck(Category category, LinkedList<string> questions)
+        public Deck(Category category, IReadOnlyCollection<string> questions)
         {
-            _questions = questions;
+            _questions = new Stack<string>(questions);
             Category = category;
         }
 
-        public string Pick()
-        {
-            var question = _questions.First();
-            _questions.RemoveFirst();
-            return question;
-        }
+        public Category Category { get; }
+
+        public string Pick() => _questions.Pop();
     }
 }
