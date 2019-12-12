@@ -7,8 +7,7 @@ namespace Trivia
         [Fact]
         public void ShouldLandInPenaltyBoxOnWrongAnswer()
         {
-            
-            Game game = new Game(new Player("bobby"), new Player("lapinte"));
+            var game = new Game(new Player("bobby"), new Player("lapinte"));
             game.Roll(1);
             
             game.WrongAnswer();
