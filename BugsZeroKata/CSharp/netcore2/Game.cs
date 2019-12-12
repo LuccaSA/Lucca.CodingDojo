@@ -9,30 +9,29 @@ namespace Trivia
     {
         private const int PlacesPerCategory = 3;
         private const int CoinsToWin = 6;
-
+        private const int QuestionCount = 50;
         List<Player> players = new List<Player>();
 
+        
         private List<Category> categories = new List<Category>();
 
         private Category popCategory = new Category("Pop");
         private Category rockCategory = new Category("Rock");
         private Category scienceCategory = new Category("Science");
         private Category sportsCategory = new Category("Sports");
+        
+        private Deck popDeck;
+        private Deck rockDeck;
+        private Deck scienceDeck;
+        private Deck sportsDeck;
 
         int[] places = new int[6];
         int[] purses = new int[6];
 
         bool[] inPenaltyBox = new bool[6];
 
-        LinkedList<string> popQuestions = new LinkedList<string>();
-        LinkedList<string> scienceQuestions = new LinkedList<string>();
-        LinkedList<string> sportsQuestions = new LinkedList<string>();
-        LinkedList<string> rockQuestions = new LinkedList<string>();
-
-
         int currentPlayer = 0;
         bool isGettingOutOfPenaltyBox;
-
 
         public Game(Player player1, Player player2)
         {
@@ -40,13 +39,23 @@ namespace Trivia
             Add(player2);
             categories.AddRange(new []{popCategory,scienceCategory,sportsCategory,rockCategory});
             
-            for (int i = 0; i < 50; i++)
+            LinkedList<string> popQuestions = new LinkedList<string>();
+            LinkedList<string> scienceQuestions = new LinkedList<string>();
+            LinkedList<string> sportsQuestions = new LinkedList<string>();
+            LinkedList<string> rockQuestions = new LinkedList<string>();
+            
+            for (int i = 0; i < QuestionCount; i++)
             {
                 popQuestions.AddLast("Pop Question " + i);
                 scienceQuestions.AddLast(("Science Question " + i));
                 sportsQuestions.AddLast(("Sports Question " + i));
                 rockQuestions.AddLast(CreateRockQuestion(i));
             }
+            
+            popDeck = new Deck(popCategory, popQuestions);
+            rockDeck = new Deck(rockCategory, rockQuestions);
+            scienceDeck = new Deck(scienceCategory, scienceQuestions);
+            sportsDeck = new Deck(sportsCategory, sportsQuestions);
         }
 
         public Game(Player player1, Player player2, Player player3)
@@ -163,25 +172,21 @@ namespace Trivia
 
         private void AskQuestion()
         {
-            if (CurrentCategory() == popCategory)
+            if (CurrentCategory() == popDeck.Category)
             {
-                Console.WriteLine(popQuestions.First());
-                popQuestions.RemoveFirst();
+                Console.WriteLine(popDeck.Pick());
             }
             if (CurrentCategory() == scienceCategory)
             {
-                Console.WriteLine(scienceQuestions.First());
-                scienceQuestions.RemoveFirst();
+                Console.WriteLine(scienceDeck.Pick());
             }
             if (CurrentCategory() == sportsCategory)
             {
-                Console.WriteLine(sportsQuestions.First());
-                sportsQuestions.RemoveFirst();
+                Console.WriteLine(sportsDeck.Pick());
             }
-            if (CurrentCategory() == rockCategory)
+            if (CurrentCategory() == rockDeck.Category)
             {
-                Console.WriteLine(rockQuestions.First());
-                rockQuestions.RemoveFirst();
+                Console.WriteLine(rockDeck.Pick());
             }
         }
 
